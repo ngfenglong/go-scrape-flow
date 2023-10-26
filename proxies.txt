@@ -1,5 +1,2 @@
-// Get free proxy list from https://proxyscrape.com/
-
-
-
-
+// Paste you proxy list here 
+// you can also get a free proxy list from https://proxyscrape.com/

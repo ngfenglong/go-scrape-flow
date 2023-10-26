@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/PuerkitoBio/goquery"
-	httpclient "github.com/ngfenglong/web-scrapper/http"
+	"github.com/ngfenglong/web-scrapper/httpclient"
 )
 
 type Data struct {
@@ -56,7 +56,7 @@ func CrawlPages(pages []string, concurrency int) []Data {
 				}(link, tokens)
 			}
 		}
-		
+
 	}
 	return dataResult
 }
