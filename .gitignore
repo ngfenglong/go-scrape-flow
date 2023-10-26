@@ -1,0 +1,14 @@
+*.exe
+*.exe~
+*.orig
+.*.swp
+.DS_Store
+Thumbs.db
+.editorconfig
+/build/
+/cli/winresources/versioninfo.json
+/cli/winresources/*.syso
+profile.out
+
+proxies.txt
+prod.env
