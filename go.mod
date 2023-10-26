@@ -1,4 +1,4 @@
-module github.com/ngfenglong/web-scrapper
+module github.com/ngfenglong/go-scrape-flow
 
 go 1.19
 

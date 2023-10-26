@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/ngfenglong/web-scrapper/httpclient"
+	"github.com/ngfenglong/go-scrape-flow/httpclient"
 )
 
 func CrawlSitemapURLs(url string) ([]string, []string) {

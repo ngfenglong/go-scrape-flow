@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/ngfenglong/web-scrapper/sitemap"
+	"github.com/ngfenglong/go-scrape-flow/sitemap"
 )
 
 func main() {

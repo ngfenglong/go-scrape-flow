@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/ngfenglong/web-scrapper/httpclient"
+	"github.com/ngfenglong/go-scrape-flow/httpclient"
 )
 
 type Data struct {
