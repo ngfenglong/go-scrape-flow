@@ -9,8 +9,8 @@ GoScrapeFlow is a Go-based tool designed to efficiently scrape websites through 
 - [Features](#features)
 - [Structure](#structure)
 - [Installation](#installation)
+- [Proxy Configuration](#proxy-configuration)
 - [Usage](#usage)
-- [Upcoming Features](#upcoming-features)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
@@ -50,16 +50,31 @@ GoScrapeFlow is a Go-based tool designed to efficiently scrape websites through 
     go get
     ```
 
+## Proxy Configuration
+
+By default, GoScrapeFlow is configured to use proxy addresses from `proxies.txt`. Here's how you can manage this:
+
+- **Update the Proxy List**: Modify the `proxies.txt` file to include your proxy addresses, one per line.
+  
+- **Disabling Proxy Usage**: If you're not planning to use any proxy (for reasons like having a VPN or a fast non-proxy connection), you can disable it:
+  1. Open the `httpclient/http.go` file.
+  2. Locate the `GetRequest` function.
+  3. Comment out or remove the line: `refreshClientWithProxy()`.
 
 ## 📖 Usage
+
+For quick start, you can now use the Makefile:
+
+```sh
+make start
+```
+
+If you prefer to run without Makefile:
 
 ```sh
 go run cmd/main.go
 ```
 
-## 🚀 Upcoming Features
-
-- **Makefile Integration:** We plan to simplify the build and run process using a Makefile. Stay tuned for updates, and you'll find relevant usage instructions here once it's integrated.
 
 ## 🤝 Contributing
 
