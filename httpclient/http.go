@@ -1,6 +1,8 @@
 package httpclient
 
 import (
+	"errors"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"sync"
@@ -10,6 +12,8 @@ import (
 const (
 	timeoutDuration = 10 * time.Second
 	requestLimit    = 10
+	proxyFile       = "proxies.txt"
+	maxRetry        = 3
 )
 
 var userAgents = []string{
@@ -34,6 +38,7 @@ var counterMutex sync.Mutex
 var client = &http.Client{
 	Timeout: timeoutDuration,
 }
+var rp *RotatingProxies
 
 func incrementCounter() {
 	counterMutex.Lock()
@@ -43,6 +48,12 @@ func incrementCounter() {
 
 func init() {
 	rand.Seed(time.Now().Unix())
+
+	proxies, err := ReadProxiesFromFile(proxyFile)
+	if err != nil {
+		panic("Failed to read proxies")
+	}
+	rp = NewRotatingProxies(proxies)
 }
 
 func randomDelay() {
@@ -54,8 +65,25 @@ func randomUserAgent() string {
 }
 
 func GetRequest(url string) (*http.Response, error) {
-	if requestCounter%requestLimit == 0 {
-		client = &http.Client{Timeout: timeoutDuration}
+	attempts := maxRetry
+
+	for requestCounter%requestLimit == 0 && attempts > 0 {
+		newProxy := rp.GetNextProxy()
+		newClient, err := CreateHTTPClientWithProxy(newProxy)
+		if err != nil {
+			attempts--
+			continue
+		}
+
+		incrementCounter()
+		client = newClient
+		fmt.Print("Using proxy - ", newProxy)
+		break
+	}
+
+	fmt.Print("Request ", requestCounter, " - ", url)
+	if attempts == 0 {
+		return nil, errors.New("system not able to find a valid proxy and has exceeded the retry limit")
 	}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
