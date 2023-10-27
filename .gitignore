@@ -10,5 +10,7 @@ Thumbs.db
 /cli/winresources/*.syso
 profile.out
 
+/dist
+
 prod.env
 proxyList.txt

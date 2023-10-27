@@ -65,27 +65,10 @@ func randomUserAgent() string {
 }
 
 func GetRequest(url string) (*http.Response, error) {
-	attempts := maxRetry
+	// Comment this if you dont want to run with proxy
+	refreshClientWithProxy()
 
-	for requestCounter%requestLimit == 0 && attempts > 0 {
-		newProxy := rp.GetNextProxy()
-		newClient, err := CreateHTTPClientWithProxy(newProxy)
-		if err != nil {
-			attempts--
-			continue
-		}
-
-		incrementCounter()
-		client = newClient
-		fmt.Print("Using proxy - ", newProxy)
-		break
-	}
-
-	fmt.Print("Request ", requestCounter, " - ", url)
-	if attempts == 0 {
-		return nil, errors.New("system not able to find a valid proxy and has exceeded the retry limit")
-	}
-
+	fmt.Println("Request ", requestCounter, " - ", url)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -98,4 +81,27 @@ func GetRequest(url string) (*http.Response, error) {
 	randomDelay()
 	incrementCounter()
 	return client.Do(req)
+}
+
+func refreshClientWithProxy() error {
+	attempts := maxRetry
+
+	for requestCounter%requestLimit == 0 && attempts > 0 {
+		newProxy := rp.GetNextProxy()
+		newClient, err := CreateHTTPClientWithProxy(newProxy)
+		if err != nil {
+			attempts--
+			continue
+		}
+
+		incrementCounter()
+		client = newClient
+		fmt.Println("Using proxy - ", newProxy)
+		break
+	}
+
+	if attempts == 0 {
+		return errors.New("system not able to find a valid proxy and has exceeded the retry limit")
+	}
+	return nil
 }
