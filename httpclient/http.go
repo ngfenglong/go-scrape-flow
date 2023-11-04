@@ -96,7 +96,7 @@ func refreshClientWithProxy() error {
 
 		incrementCounter()
 		client = newClient
-		fmt.Println("Using proxy - ", newProxy)
+		fmt.Println("Refreshing proxy - ", newProxy)
 		break
 	}
 

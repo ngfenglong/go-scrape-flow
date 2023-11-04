@@ -13,15 +13,15 @@ func CrawlSitemapURLs(url string) ([]string, []string) {
 	worklist := make(chan []string)
 	toScrape := []string{}
 	errLog := []string{}
-	n := 1
-
+	var n int
+	n++
 	go func() { worklist <- []string{url} }()
 
 	for ; n > 0; n-- {
 		list := <-worklist
 		// For each link, create a new goroutine to extract of sitemaps and pages
 		for _, link := range list {
-			n++ // to block and it is looping through all worklist
+			n++ // to block and looping through worklist
 			go func(link string) {
 				res, err := httpclient.GetRequest(link)
 				if err != nil {
