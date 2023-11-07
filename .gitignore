@@ -11,6 +11,7 @@ Thumbs.db
 profile.out
 
 /dist
+/output
 
 prod.env
 proxyList.txt
