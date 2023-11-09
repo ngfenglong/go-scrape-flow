@@ -1,12 +1,13 @@
 package sitemap
 
 import (
-	"fmt"
 	"net/http"
 	"sync"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/ngfenglong/go-scrape-flow/helper/log"
 	"github.com/ngfenglong/go-scrape-flow/httpclient"
+	"github.com/sirupsen/logrus"
 )
 
 type Data struct {
@@ -17,6 +18,8 @@ type Data struct {
 	StatusCode      int
 	// Add individual type
 }
+
+var logger = log.New(logrus.InfoLevel, false)
 
 var selectorsToRemove = []string{
 	"body script",
@@ -31,27 +34,25 @@ func CrawlPages(pages []string, concurrency int) []Data {
 
 	for _, link := range pages {
 		if link != "" {
-			fmt.Println("Checking Url - ", link)
+			logger.Info("Scraping Page ", logrus.Fields{"Url": link})
 			wg.Add(1)
 			go func(pageUrl string, tokens chan struct{}) {
 				defer wg.Done()
 				tokens <- struct{}{}
-				fmt.Println("Requesting from URL: ", pageUrl) // to add into log
+				logger.Info("Requesting from URL ", logrus.Fields{"Url": pageUrl})
 				<-tokens
 				res, err := httpclient.GetRequest(pageUrl)
 				if err != nil {
-					fmt.Printf("Error: %v", err) // to add into log
+					logger.Error("Error crawling page", logrus.Fields{"Url": pageUrl, "Error": err})
 					return
 				}
 
 				data, err := extractContentFromResponse(res)
 				if err != nil {
-					fmt.Printf("Error: %v", err) // to add into log
+					logger.Error("Error extracting content from response", logrus.Fields{"Error": err})
 					return
 				}
-				fmt.Println(data)
 				dataChan <- data
-
 			}(link, tokens)
 		}
 	}

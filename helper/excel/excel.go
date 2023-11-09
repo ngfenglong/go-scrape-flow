@@ -7,10 +7,6 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-const (
-	
-)
-
 type ExcelFile struct {
 	file *excelize.File
 	name string
@@ -26,13 +22,14 @@ func CreateNewFile(name string) *ExcelFile {
 }
 
 // SaveAs saves the Excel file to the specified path.
-func (ef *ExcelFile) SaveAs(path string) {
+func (ef *ExcelFile) SaveAs(path string) error {
 	if path[len(path)-1] != '/' {
 		path = path + "/"
 	}
 	if err := ef.file.SaveAs(path + ef.name + ".xlsx"); err != nil {
-		fmt.Println(err)
+		return err
 	}
+	return nil
 }
 
 func (ef *ExcelFile) Close() error {
@@ -50,13 +47,14 @@ func (ef *ExcelFile) DeleteSheet(sheetName string) {
 }
 
 // Setting the sheet to be the active one
-func (ef *ExcelFile) Activatesheet(sheetName string) {
+func (ef *ExcelFile) Activatesheet(sheetName string) error {
 	if index, err := ef.file.GetSheetIndex(sheetName); err != nil {
-		fmt.Println(err)
+		return err
 	} else {
 		ef.file.SetActiveSheet(index)
 	}
 
+	return nil
 }
 
 // ======================= Row-level Operations ===========================

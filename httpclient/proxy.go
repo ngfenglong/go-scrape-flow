@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/proxy"
 )
 
@@ -53,7 +54,7 @@ func CreateHTTPClientWithProxy(proxyAddr string) (*http.Client, error) {
 	// Create a dialer from the proxy's address
 	dialer, err := proxy.FromURL(parseURL(socks5URL), proxy.Direct)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to create dialer: %v", err)
+		return nil, fmt.Errorf("failed to create dialer: %v", err)
 	}
 
 	// Setup HTTP transport and client
@@ -83,22 +84,24 @@ func TestProxy(proxyFile string) {
 
 	for i := 0; i < len(proxies); i++ { // Rotate through all proxies once
 		currentProxy := rp.GetNextProxy()
-		fmt.Printf("Testing proxy %v using : %v\n", i+1, currentProxy)
+		logger.Info("Testing proxy", logrus.Fields{
+			"index": i, "IP Address": currentProxy,
+		})
 		client, err := CreateHTTPClientWithProxy(currentProxy)
 		if err != nil {
-			fmt.Printf("Error creating client with proxy: %v\n", err)
+			logger.Error("Error creating client with proxy", logrus.Fields{"error": err})
 			continue
 		}
 		ip, err := CheckPublicIP(client)
 		if err != nil {
-			fmt.Printf("Failed to fetch public IP with proxy %s: %v\n", currentProxy, err)
+			logger.Error("Failed to fetch get request with proxy", logrus.Fields{"IP Address": currentProxy, "error": err})
 			continue
 		}
 
 		if strings.HasPrefix(currentProxy, ip) {
-			fmt.Printf("Successfully used proxy: %s\n", currentProxy)
+			logger.Info("Proxy is valid", logrus.Fields{"IP Address": currentProxy})
 		} else {
-			fmt.Printf("Proxy %s might not be working as expected. Got IP: %s\n", currentProxy, ip)
+			logger.Error("Proxy is not working as expdcted", logrus.Fields{"IP Address": currentProxy})
 		}
 	}
 }

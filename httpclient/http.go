@@ -2,11 +2,13 @@ package httpclient
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/ngfenglong/go-scrape-flow/helper/log"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -15,6 +17,8 @@ const (
 	proxyFile       = "proxies.txt"
 	maxRetry        = 3
 )
+
+var logger = log.New(logrus.InfoLevel, false)
 
 var userAgents = []string{
 	// Chrome
@@ -66,9 +70,9 @@ func randomUserAgent() string {
 
 func GetRequest(url string) (*http.Response, error) {
 	// Comment this if you dont want to run with proxy
-	refreshClientWithProxy()
+	// refreshClientWithProxy()
 
-	fmt.Println("Request ", requestCounter, " - ", url)
+	logger.Info("New Request ", logrus.Fields{"counter": requestCounter, "url": url})
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -96,7 +100,10 @@ func refreshClientWithProxy() error {
 
 		incrementCounter()
 		client = newClient
-		fmt.Println("Refreshing proxy - ", newProxy)
+		logger.Info("Refreshing proxy", logrus.Fields{
+			"proxy": newProxy,
+		})
+
 		break
 	}
 

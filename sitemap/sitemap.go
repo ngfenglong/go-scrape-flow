@@ -1,18 +1,17 @@
 package sitemap
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/ngfenglong/go-scrape-flow/httpclient"
+	"github.com/sirupsen/logrus"
 )
 
-func CrawlSitemapURLs(url string) ([]string, []string) {
+func CrawlSitemapURLs(url string) []string {
 	worklist := make(chan []string)
 	toScrape := []string{}
-	errLog := []string{}
 	var n int
 	n++
 	go func() { worklist <- []string{url} }()
@@ -24,11 +23,11 @@ func CrawlSitemapURLs(url string) ([]string, []string) {
 			go func(link string) {
 				res, err := httpclient.GetRequest(link)
 				if err != nil {
-					errLog = append(errLog, fmt.Sprint("Error making request with: ", link))
+					logger.Error("Error crawling sitemap ", logrus.Fields{"Error": err})
 				} else {
 					urls, err := extractUrlsFromResponse(res)
 					if err != nil {
-						errLog = append(errLog, fmt.Sprint("Error extracting urls from: ", link))
+						logger.Error("Error extracting urls ", logrus.Fields{"Url": link, "Error": err})
 					}
 					sitesMap, pages := segregateURLs(urls)
 
@@ -42,7 +41,7 @@ func CrawlSitemapURLs(url string) ([]string, []string) {
 		}
 	}
 
-	return toScrape, errLog
+	return toScrape
 }
 
 func extractUrlsFromResponse(res *http.Response) ([]string, error) {
