@@ -1,10 +1,12 @@
 package main
 
 import (
+	"os"
 	"time"
 
+	"github.com/ngfenglong/go-scrape-flow/cmd"
 	"github.com/ngfenglong/go-scrape-flow/helper/excel"
-	log "github.com/ngfenglong/go-scrape-flow/helper/log"
+	"github.com/ngfenglong/go-scrape-flow/helper/log"
 	"github.com/ngfenglong/go-scrape-flow/sitemap"
 	"github.com/sirupsen/logrus"
 )
@@ -13,13 +15,18 @@ var logger = log.New(logrus.InfoLevel, false)
 
 func main() {
 	// Provided a sitemap URL
-	url := "https://www.rocktherankings.com/sitemap.xml"
-	scrapeSitemap(url, 10)
+	if err := cmd.Execute(); err != nil {
+		logger.Error("Error executing command", logrus.Fields{"error": err})
+		os.Exit(1)
+	}
+
+	// url := "https://www.rocktherankings.com/sitemap.xml"
+	// ScrapeSitemap(url, 10)
 }
 
-func scrapeSitemap(url string, concurr int) {
+func ScrapeSitemap(url string, concurr int) {
 	pages := sitemap.CrawlSitemapURLs(url)
-	logger.Info("Crawling Pages - ", logrus.Fields{"Number of Page": len(pages)}) // Temporary
+	logger.Info("Crawling Pages - ", logrus.Fields{"Number of Page": len(pages)})
 	data := sitemap.CrawlPages(pages, concurr)
 
 	dateStr := time.Now().Format("02012006")
