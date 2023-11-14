@@ -1,17 +1,41 @@
-# for Window
-SHELL=cmd
+# Define the binary name
+BINARY_NAME=goscrape
+OUTPUT_FOLDER=output
 
+# ==============================================================================
+
+# Define the default make action
+all: build setup
+
+# Build the project
 build:
-	@echo Building...
-	@go build -o dist/api.exe ./${SHELL}
-	@echo Backend built!
+	go build -o ${BINARY_NAME} .
+	chmod +x ${BINARY_NAME}
 
-start: build
-	@echo Starting the Backend ...
-	.\dist\api.exe
-	@echo Backend running!
+# To setup project folder
+setup: 
+	mkdir ./${OUTPUT_FOLDER}
 
-stop:
-	@echo Stopping the Backend...
-	@taskkill /IM api.exe /F
-	@echo Stopped Backend
+# Run the project
+run:
+	./${BINARY_NAME}
+
+# Clean up
+clean:
+	go clean
+	rm ${BINARY_NAME}
+
+# Clean up
+clean-output:
+	rm -r ./${OUTPUT_FOLDER}
+
+
+# ==============================================================================
+# dev test command
+
+dev-test:
+	./${BINARY_NAME} start https://www.rocktherankings.com/sitemap.xml
+
+	
+	
+
