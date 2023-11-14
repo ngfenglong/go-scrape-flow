@@ -23,6 +23,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.SetHelpFunc(helpFunction)
 	rootCmd.AddCommand(configCmd)
+	rootCmd.AddCommand(startCmd)
 }
 
 func Execute() error {
