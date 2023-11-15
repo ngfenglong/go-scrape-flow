@@ -43,14 +43,10 @@ func helpFunction(cmd *cobra.Command, args []string) {
 	helpMessage += "  " + command.Sprint("goscrape") + " [command] [arguments]\n\n"
 	helpMessage += header.Sprint("Commands:\n")
 	helpMessage += "  " + command.Sprint("start") + "     Initiate the web scraping process with a given sitemap URL.\n"
+	helpMessage += "             Options:\n"
+	helpMessage += "               " + option.Sprint("--output, -o") + "    Specify the output file name for the scraped data.\n"
 	helpMessage += "             Example:\n"
-	helpMessage += "               " + example.Sprint("goscrape start https://example.com/sitemap.xml") + "\n\n"
-	helpMessage += "  " + command.Sprint("config") + "    View or set configuration settings for the scraper.\n"
-	helpMessage += "             Example:\n"
-	helpMessage += "               " + example.Sprint("goscrape config --set output=json") + "\n\n"
-	helpMessage += "  " + command.Sprint("status") + "    Check the current status of the scraper.\n"
-	helpMessage += "             Example:\n"
-	helpMessage += "               " + example.Sprint("goscrape status") + "\n\n"
+	helpMessage += "               " + example.Sprint("goscrape start https://example.com/sitemap.xml -o output.xlsx") + "\n\n"
 	helpMessage += header.Sprint("Options:\n")
 	helpMessage += "  " + option.Sprint("-h, --help") + "    Show this help message and exit.\n"
 	helpMessage += "  " + option.Sprint("-v, --version") + " Show the version number and exit.\n\n"

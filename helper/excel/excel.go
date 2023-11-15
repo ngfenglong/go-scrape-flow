@@ -3,6 +3,7 @@ package excel
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -26,9 +27,16 @@ func (ef *ExcelFile) SaveAs(path string) error {
 	if path[len(path)-1] != '/' {
 		path = path + "/"
 	}
-	if err := ef.file.SaveAs(path + ef.name + ".xlsx"); err != nil {
+
+	path = path + ef.name
+	if !strings.HasSuffix(path, ".xlsx") {
+		path = path + ".xlsx"
+	}
+
+	if err := ef.file.SaveAs(path); err != nil {
 		return err
 	}
+
 	return nil
 }
 

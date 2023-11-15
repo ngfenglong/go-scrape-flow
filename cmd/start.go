@@ -12,6 +12,7 @@ import (
 )
 
 var logger = log.New(logrus.InfoLevel, false)
+var outputFileName string
 
 var startCmd = &cobra.Command{
 	Use:   "start [sitemap URL]",
@@ -21,23 +22,35 @@ var startCmd = &cobra.Command{
 	Run:   runStart,
 }
 
+func init() {
+	startCmd.PersistentFlags().StringVarP(&outputFileName, "output", "o", "", "Optional: Name of the output file")
+}
+
 func runStart(cmd *cobra.Command, args []string) {
 	url := args[0]
 
 	fmt.Println("Starting scrape for: ", url)
 
-	scrapeSitemap(url, 10)
+	data := scrapeSitemap(url, 10)
+
+	var fileName string
+	if outputFileName != "" {
+		fileName = outputFileName
+	} else {
+		dateStr := time.Now().Format("02012006")
+		fileName = "Excel_File_" + dateStr
+	}
+
+	createExcelFile(data, fileName)
 }
 
-func scrapeSitemap(url string, concurr int) {
+func scrapeSitemap(url string, concurr int) []sitemap.Data {
 	pages := sitemap.CrawlSitemapURLs(url)
 	logger.Info("Crawling Pages - ", logrus.Fields{"Number of Page": len(pages)})
 	data := sitemap.CrawlPages(pages, concurr)
 
-	dateStr := time.Now().Format("02012006")
-	fileName := "Excel_File_" + dateStr
+	return data
 
-	createExcelFile(data, fileName)
 }
 
 func createExcelFile(data []sitemap.Data, fn string) {
