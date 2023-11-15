@@ -63,17 +63,66 @@ By default, GoScrapeFlow is configured to use proxy addresses from `proxies.txt`
 
 ## 📖 Usage
 
-For quick start, you can now use the Makefile:
+### Quick Start with Makefile
+
+To build and set up the project, run:
 
 ```sh
-make start
+make all
 ```
 
-If you prefer to run without Makefile:
+This command builds the `goscrape` binary and sets up the necessary folders.
+
+To run the project:
 
 ```sh
-go run cmd/main.go
+make run
 ```
+
+For development testing with a predefined URL:
+
+```sh
+make dev-test
+```
+
+### Manual Setup and Run
+
+If you prefer to set up and run without the Makefile:
+
+1. **Build the project:**
+
+    ```sh
+    go build -o goscrape .
+    chmod +x goscrape
+    ```
+
+2. **Create the output folder:**
+
+    ```sh
+    mkdir ./output
+    ```
+
+3. **Run the project:**
+
+    ```sh
+    ./goscrape
+    ```
+
+### Cleaning Up
+
+To clean up the generated files:
+
+- To remove the `goscrape` binary:
+
+    ```sh
+    make clean
+    ```
+
+- To remove the output folder:
+
+    ```sh
+    make clean-output
+    ```
 
 
 ## 🤝 Contributing
