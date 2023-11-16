@@ -30,15 +30,26 @@ These features are geared toward making `GoScrapeFlow` a versatile tool for web 
 
 ## Structure
 ```plaintext
-── cmd
-│ └── main.go
+├── cmd
+│   ├── config.go
+│   ├── root.go
+│   └── start.go
+├── helper
+│   ├── excel
+│   │   └── excel.go
+│   └── log
+│       └── log.go
 ├── httpclient
-│ ├── http.go
-│ └── proxy.go
-└── sitemap
-│ ├── sitemap.go
-│ └── scrape.go
-
+│   ├── http.go
+│   └── proxy.go
+├── output
+│   [your output excel files will be here]
+├── sitemap
+│   ├── scrape.go
+│   └── sitemap.go
+├── main.go
+├── Makefile
+└── proxies.txt
 ```
 
 ## 📦 Installation
