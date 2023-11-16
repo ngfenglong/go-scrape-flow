@@ -13,6 +13,7 @@ import (
 
 var logger = log.New(logrus.InfoLevel, false)
 var outputFileName string
+var extraSelectors []string
 
 var startCmd = &cobra.Command{
 	Use:   "start [sitemap URL]",
@@ -24,6 +25,7 @@ var startCmd = &cobra.Command{
 
 func init() {
 	startCmd.PersistentFlags().StringVarP(&outputFileName, "output", "o", "", "Optional: Name of the output file")
+	startCmd.PersistentFlags().StringSliceVarP(&extraSelectors, "selector", "s", []string{}, "Extra selectors to scrape")
 }
 
 func runStart(cmd *cobra.Command, args []string) {
@@ -47,7 +49,7 @@ func runStart(cmd *cobra.Command, args []string) {
 func scrapeSitemap(url string, concurr int) []sitemap.Data {
 	pages := sitemap.CrawlSitemapURLs(url)
 	logger.Info("Crawling Pages - ", logrus.Fields{"Number of Page": len(pages)})
-	data := sitemap.CrawlPages(pages, concurr)
+	data := sitemap.CrawlPages(pages, concurr, extraSelectors)
 
 	return data
 
@@ -59,20 +61,19 @@ func createExcelFile(data []sitemap.Data, fn string) {
 
 	var sheetName string = "Sheet1"
 	f.CreateNewSheet(sheetName)
-	f.SetRowValues(sheetName, 1, []interface{}{
-		"URL",
-		"Title",
-		"MetaDescription",
-		"H1",
-	})
+
+	var headers []interface{} = []interface{}{"URL", "Title", "MetaDescription", "H1"}
+	for key := range data[0].ExtraData {
+		headers = append(headers, key)
+	}
+	f.SetRowValues(sheetName, 1, headers)
 
 	for i, d := range data {
-		f.SetRowValues(sheetName, i+2, []interface{}{
-			d.URL,
-			d.Title,
-			d.MetaDescription,
-			d.H1,
-		})
+		var row []interface{} = []interface{}{d.URL, d.Title, d.MetaDescription, d.H1}
+		for _, header := range headers[4:] { // Skip the first 4 static headers
+			row = append(row, d.ExtraData[header.(string)])
+		}
+		f.SetRowValues(sheetName, i+2, row)
 	}
 
 	f.SaveAs("./output/")

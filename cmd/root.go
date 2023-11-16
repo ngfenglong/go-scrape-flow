@@ -44,9 +44,10 @@ func helpFunction(cmd *cobra.Command, args []string) {
 	helpMessage += header.Sprint("Commands:\n")
 	helpMessage += "  " + command.Sprint("start") + "     Initiate the web scraping process with a given sitemap URL.\n"
 	helpMessage += "             Options:\n"
+	helpMessage += "               " + option.Sprint("--selector, -s") + "    Specify CSS selectors to scrape additional data.\n"
 	helpMessage += "               " + option.Sprint("--output, -o") + "    Specify the output file name for the scraped data.\n"
 	helpMessage += "             Example:\n"
-	helpMessage += "               " + example.Sprint("goscrape start https://example.com/sitemap.xml -o output.xlsx") + "\n\n"
+	helpMessage += "               " + example.Sprint("goscrape start https://example.com/sitemap.xml -s '.class1' -s '#id1' -o output.xlsx") + "\n\n"
 	helpMessage += header.Sprint("Options:\n")
 	helpMessage += "  " + option.Sprint("-h, --help") + "    Show this help message and exit.\n"
 	helpMessage += "  " + option.Sprint("-v, --version") + " Show the version number and exit.\n\n"

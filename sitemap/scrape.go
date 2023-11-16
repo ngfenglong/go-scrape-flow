@@ -16,7 +16,7 @@ type Data struct {
 	MetaDescription string
 	H1              string
 	StatusCode      int
-	// Add individual type
+	ExtraData       map[string]string
 }
 
 var logger = log.New(logrus.InfoLevel, false)
@@ -27,7 +27,7 @@ var selectorsToRemove = []string{
 	"body link",
 }
 
-func CrawlPages(pages []string, concurrency int) []Data {
+func CrawlPages(pages []string, concurrency int, selectors []string) []Data {
 	var wg sync.WaitGroup
 	tokens := make(chan struct{}, concurrency) // To be use as Semaphore
 	dataChan := make(chan Data, len(pages))    // Using channel so dont have to use mutex
@@ -47,7 +47,7 @@ func CrawlPages(pages []string, concurrency int) []Data {
 					return
 				}
 
-				data, err := extractContentFromResponse(res)
+				data, err := extractContentFromResponse(res, selectors)
 				if err != nil {
 					logger.Error("Error extracting content from response", logrus.Fields{"Error": err})
 					return
@@ -70,7 +70,7 @@ func CrawlPages(pages []string, concurrency int) []Data {
 	return finalResults
 }
 
-func extractContentFromResponse(res *http.Response) (Data, error) {
+func extractContentFromResponse(res *http.Response, selectors []string) (Data, error) {
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		return Data{}, err
@@ -85,6 +85,11 @@ func extractContentFromResponse(res *http.Response) (Data, error) {
 	result.Title = doc.Find("title").First().Text()
 	result.H1 = doc.Find("h1").First().Text()
 	result.MetaDescription, _ = doc.Find("meta[name^=description]").Attr("content")
+	result.ExtraData = make(map[string]string)
+
+	for _, selector := range selectors {
+        result.ExtraData[selector] = doc.Find(selector).First().Text()
+    }
 
 	return result, nil
 }
