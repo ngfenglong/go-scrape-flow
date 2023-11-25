@@ -13,6 +13,7 @@ import (
 
 var logger = log.New(logrus.InfoLevel, false)
 var outputFileName string
+var isSinglePage bool
 var extraSelectors []string
 
 var startCmd = &cobra.Command{
@@ -26,14 +27,22 @@ var startCmd = &cobra.Command{
 func init() {
 	startCmd.PersistentFlags().StringVarP(&outputFileName, "output", "o", "", "Optional: Name of the output file")
 	startCmd.PersistentFlags().StringSliceVarP(&extraSelectors, "selector", "s", []string{}, "Extra selectors to scrape")
+	startCmd.PersistentFlags().BoolVarP(&isSinglePage, "single-page", "p", false, "Treat the URL as a single page instead of a sitemap")
+
 }
 
 func runStart(cmd *cobra.Command, args []string) {
+	var data []sitemap.Data
 	url := args[0]
 
-	fmt.Println("Starting scrape for: ", url)
+	if isSinglePage {
+		fmt.Println("Starting scrape for single page: ", url)
+		data = scrapeSinglePage(url)
+	} else {
 
-	data := scrapeSitemap(url, 10)
+		fmt.Println("Starting scrape sitemap for: ", url)
+		data = scrapeSitemap(url, 10)
+	}
 
 	var fileName string
 	if outputFileName != "" {
@@ -44,6 +53,12 @@ func runStart(cmd *cobra.Command, args []string) {
 	}
 
 	createSitemapDataExcelFile(data, fileName)
+}
+
+func scrapeSinglePage(url string) []sitemap.Data {
+	data := sitemap.CrawlPages([]string{url}, 1, extraSelectors)
+
+	return data
 }
 
 func scrapeSitemap(url string, concurr int) []sitemap.Data {

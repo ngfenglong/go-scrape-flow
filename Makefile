@@ -36,6 +36,9 @@ clean-output:
 dev-test-start:
 	./${BINARY_NAME} start https://www.rocktherankings.com/sitemap.xml
 
+dev-test-starturl:
+	./${BINARY_NAME} start https://eatbook.sg/ -p
+
 dev-test-analyse:
 	./${BINARY_NAME} analyse https://eatbook.sg/
 
