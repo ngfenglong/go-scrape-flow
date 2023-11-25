@@ -100,7 +100,7 @@ func createAnaylsedDataExcelFile(content sitemap.ContentMap, fn string) {
 	f.SetRowValues(idSheetName, 1, idHeader)
 
 	r = 2
-	for key, value := range content.Tags {
+	for key, value := range content.IDs {
 		row := []interface{}{key, value}
 		f.SetRowValues(idSheetName, r, row)
 		r++

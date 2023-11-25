@@ -33,8 +33,11 @@ clean-output:
 # ==============================================================================
 # dev test command
 
-dev-test:
+dev-test-start:
 	./${BINARY_NAME} start https://www.rocktherankings.com/sitemap.xml
+
+dev-test-analyse:
+	./${BINARY_NAME} analyse https://eatbook.sg/
 
 	
 	
