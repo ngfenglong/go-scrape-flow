@@ -43,7 +43,7 @@ func runStart(cmd *cobra.Command, args []string) {
 		fileName = "Excel_File_" + dateStr
 	}
 
-	createExcelFile(data, fileName)
+	createSitemapDataExcelFile(data, fileName)
 }
 
 func scrapeSitemap(url string, concurr int) []sitemap.Data {
@@ -52,10 +52,9 @@ func scrapeSitemap(url string, concurr int) []sitemap.Data {
 	data := sitemap.CrawlPages(pages, concurr, extraSelectors)
 
 	return data
-
 }
 
-func createExcelFile(data []sitemap.Data, fn string) {
+func createSitemapDataExcelFile(data []sitemap.Data, fn string) {
 	f := excel.CreateNewFile(fn)
 	defer f.Close()
 
