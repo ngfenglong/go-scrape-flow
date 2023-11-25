@@ -17,28 +17,37 @@ GoScrapeFlow is a Go-based tool designed to efficiently scrape websites through 
 
 ## 🚀 Features
 
-## 🚀 Features
-
 - **Efficient Scraping:** Optimized for scraping through sitemaps, ensuring comprehensive and systematic data extraction.
 - **Modular Architecture:** Composed of organized modules for HTTP handling, proxy rotation, sitemap parsing, and scraping tasks.
 - **Integrated Logging:** Utilizes Logrus for logging, providing insights into the scraping process and aiding in identifying potential issues.
 - **Data Export:** Supports exporting scraped data to Excel format, with flexibility in naming the output file using the `-o` flag.
-- **(In Progress) Dynamic Content Extraction: Currently enhancing the tool to allow users to specify custom selectors (like class names) for scraping specific content.
-- **(Upcoming) Single URL Analysis: Planning to extend functionality to analyze a single URL, extracting and listing all identifiable class names and types of data, and presenting them in an Excel file for comprehensive analysis.
+- **Dynamic Content Extraction:** Currently enhancing the tool to allow users to specify custom selectors (like class names) for scraping specific content.
+- **(In Progress) Single URL Analysis: Planning to extend functionality to analyze a single URL, extracting and listing all identifiable class names and types of data, and presenting them in an Excel file for comprehensive analysis.
 
 These features are geared toward making `GoScrapeFlow` a versatile tool for web scraping, data analysis, and content aggregation, catering to both specific and broad scraping needs.
 
 ## Structure
 ```plaintext
-── cmd
-│ └── main.go
+├── cmd
+│   ├── config.go
+│   ├── root.go
+│   └── start.go
+├── helper
+│   ├── excel
+│   │   └── excel.go
+│   └── log
+│       └── log.go
 ├── httpclient
-│ ├── http.go
-│ └── proxy.go
-└── sitemap
-│ ├── sitemap.go
-│ └── scrape.go
-
+│   ├── http.go
+│   └── proxy.go
+├── output
+│   [your output excel files will be here]
+├── sitemap
+│   ├── scrape.go
+│   └── sitemap.go
+├── main.go
+├── Makefile
+└── proxies.txt
 ```
 
 ## 📦 Installation
