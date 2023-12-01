@@ -29,16 +29,16 @@ func New(level log.Level, jsonFormat bool) *LogHelper {
 
 func (l *LogHelper) Info(message string, fields ...log.Fields) {
 	if len(fields) > 0 {
-		l.WithFields(fields[0]).Info(message)
+		l.Logger.WithFields(fields[0]).Info(message)
 	} else {
-		l.Info(message)
+		l.Logger.Info(message)
 	}
 }
 
 func (l *LogHelper) Error(message string, fields ...log.Fields) {
 	if len(fields) > 0 {
-		l.WithFields(fields[0]).Error(message)
+		l.Logger.WithFields(fields[0]).Error(message)
 	} else {
-		l.Error(message)
+		l.Logger.Error(message)
 	}
 }
