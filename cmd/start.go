@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 var logger = log.New(logrus.InfoLevel, false)
 var outputFileName string
 var isSinglePage bool
+var jsonOutput bool
 var extraSelectors []string
 
 var startCmd = &cobra.Command{
@@ -25,38 +27,53 @@ var startCmd = &cobra.Command{
 }
 
 func init() {
+	startCmd.PersistentFlags().BoolVarP(&isSinglePage, "single-page", "p", false, "Treat the URL as a single page instead of a sitemap")
+	startCmd.PersistentFlags().BoolVarP(&jsonOutput, "json", "j", false, "Enable JSON format for output. This option is applicable only for single-page scraping and exports the data as a JSON file.")
 	startCmd.PersistentFlags().StringVarP(&outputFileName, "output", "o", "", "Optional: Name of the output file")
 	startCmd.PersistentFlags().StringSliceVarP(&extraSelectors, "selector", "s", []string{}, "Extra selectors to scrape")
-	startCmd.PersistentFlags().BoolVarP(&isSinglePage, "single-page", "p", false, "Treat the URL as a single page instead of a sitemap")
-
 }
 
 func runStart(cmd *cobra.Command, args []string) {
 	var data []sitemap.Data
 	url := args[0]
 
+	if jsonOutput && !isSinglePage {
+		logger.Error("JSON output format is only available for single-page scraping.")
+		logger.Error("Please use the --single-page flag when using --json.")
+		return // Exit the function without performing the scraping
+	}
+
+	logger.Info("Scraping info", logrus.Fields{"j": jsonOutput, "p": isSinglePage})
 	if isSinglePage {
-		fmt.Println("Starting scrape for single page: ", url)
+		logger.Info("Starting scrape for single page: " + url)
 		data = scrapeSinglePage(url)
 	} else {
-
-		fmt.Println("Starting scrape sitemap for: ", url)
+		logger.Info("Starting scrape sitemap for: " + url)
 		data = scrapeSitemap(url, 10)
 	}
-
-	var fileName string
-	if outputFileName != "" {
-		fileName = outputFileName
+	if jsonOutput {
+		j, err := json.Marshal(data)
+		if err != nil {
+			logger.Error("Failed to marshal data to JSON", logrus.Fields{"error": err})
+			return
+		}
+		fmt.Println(string(j))
 	} else {
-		dateStr := time.Now().Format("02012006")
-		fileName = "Excel_File_" + dateStr
-	}
+		var fileName string
+		if outputFileName != "" {
+			fileName = outputFileName
+		} else {
+			dateStr := time.Now().Format("02012006")
+			fileName = "Excel_File_" + dateStr
+		}
 
-	createSitemapDataExcelFile(data, fileName)
+		createSitemapDataExcelFile(data, fileName)
+	}
 }
 
 func scrapeSinglePage(url string) []sitemap.Data {
-	data := sitemap.CrawlPages([]string{url}, 1, extraSelectors)
+	urls := []string{url}
+	data := sitemap.CrawlPages(urls, 1, extraSelectors)
 
 	return data
 }
